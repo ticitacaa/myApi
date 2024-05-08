@@ -1,0 +1,70 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.1'
+	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.asciidoctor.jvm.convert' version '3.3.2' // (1)
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	asciidoctorExt // (2)
+}
+
+repositories {
+	mavenCentral()
+}
+
+// (3)
+ext {
+	snippetsDir = file('build/generated-snippets')
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor' // (4)
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc' // (5)
+}
+
+asciidoctor {
+	dependsOn test // asciidoctor를 수행하기전 test를 수행하도록 선언
+	configurations 'asciidoctorExt'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// (7)
+tasks.register('copyApiDocument', Copy) { // 자동으로 생성된 문서를 옮겨주는 copyApiDocument task 선언
+	dependsOn asciidoctor // copyApiDocument를 수행하기전 asciidoctor를 수행하도록 선언
+	doFirst { // 작업이 실행되기전 수행하는 작업 선언
+		delete file("src/main/resources/static/docs") // 기존 문서 삭제
+	}
+	// 생성된 문서를 static/docs로 이동
+	from asciidoctor.outputDir
+	into file("src/main/resources/static/docs")
+}
+
+tasks.withType(JavaExec) {
+	// JVM 인수로 '--add-opens' 옵션을 추가
+	jvmArgs '--add-opens', 'java.base/sun.nio.ch=ALL-UNNAMED', '--add-opens', 'java.base/java.io=ALL-UNNAMED'
+}
+
+build {
+	dependsOn copyApiDocument // 프로젝트 빌드 전 copyApiDocument를 실행하도록 변경
+}

@@ -1,0 +1,46 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= API 명세서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+= Common
+
+== 공통 API 응답 포맷
+
+== 응답 상태 코드 및 메세지
+
+
+= API
+
+== Post API
+=== 국내 시세 조회 API
+
+==== 1. Curl Request
+include::{snippets}/get-datas/curl-request.adoc[]
+
+==== 2. HTTP Request
+include::{snippets}/get-datas/http-request.adoc[]
+
+==== 3. HTTP Request2
+include::{snippets}/get-datas/httpie-request.adoc[]
+
+==== 4. HTTP Response
+include::{snippets}/get-datas/http-response.adoc[]
+
+==== 4. HTTP Request Parameters
+
+===== 1) Query Parameters
+include::{snippets}/get-datas/query-parameters.adoc[]
+
+==== 5. HTTP Request Body
+include::{snippets}/get-datas/request-body.adoc[]
+
+==== 6. HTTP Response Body
+include::{snippets}/get-datas/response-body.adoc[]
+include::{snippets}/get-datas/response-fields.adoc[]
